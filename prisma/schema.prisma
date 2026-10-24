@@ -1,0 +1,165 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  COURIER
+  ADMIN
+  ENTERPRISE
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  COURIER_ASSIGNED
+  PICKING_UP
+  IN_TRANSIT
+  ARRIVED
+  DELIVERED
+  CANCELLED
+}
+
+enum SpeedTier {
+  HYPERSPEED   // 15-30 min
+  SAME_DAY     // Within 4-6 hours
+  SCHEDULED    // Time window
+  ECO_FREIGHT  // Bulk/Overnight
+}
+
+enum PackageCategory {
+  FOOD
+  ELECTRONICS
+  FURNITURE
+  FLOWERS
+  MEDICINE
+  DOCUMENTS
+  PETS
+  CLOTHING
+  PACKAGES
+  FRAGILE
+  CARGO
+  ANYTHING
+}
+
+enum CourierVehicle {
+  WALKER
+  ELECTRIC_BIKE
+  CYBER_SCOOTER
+  ELECTRIC_SEDAN
+  CARGO_VAN
+  DRONE_AIR
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String?        @unique
+  emailVerified DateTime?
+  phone         String?
+  image         String?
+  role          Role           @default(USER)
+  balance       Float          @default(250.0) // In USD
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  ordersPlaced  Order[]        @relation("CustomerOrders")
+  courierProfile CourierProfile?
+  savedAddresses Address[]
+  reviewsWritten Review[]
+}
+
+model CourierProfile {
+  id            String         @id @default(cuid())
+  userId        String         @unique
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleType   CourierVehicle @default(ELECTRIC_BIKE)
+  vehiclePlate  String?
+  rating        Float          @default(4.98)
+  completedJobs Int            @default(412)
+  isOnline      Boolean        @default(true)
+  currentLat    Float?
+  currentLng    Float?
+  walletBalance Float          @default(1420.50)
+  kycVerified   Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  ordersAssigned Order[]       @relation("AssignedCourier")
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String   // e.g. "Home", "Penthouse 4B", "HQ Silicon"
+  fullAddress String
+  latitude    Float
+  longitude   Float
+  apartment   String?
+  floor       String?
+  accessCode  String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id              String          @id @default(cuid())
+  orderNumber     String          @unique
+  customerId      String
+  customer        User            @relation("CustomerOrders", fields: [customerId], references: [id])
+  courierId       String?
+  courier         CourierProfile? @relation("AssignedCourier", fields: [courierId], references: [id])
+  
+  category        PackageCategory @default(PACKAGES)
+  speedTier       SpeedTier       @default(HYPERSPEED)
+  status          OrderStatus     @default(PENDING)
+  
+  pickupAddress   String
+  pickupLat       Float
+  pickupLng       Float
+  pickupContact   String?
+  
+  dropoffAddress  String
+  dropoffLat      Float
+  dropoffLng      Float
+  dropoffContact  String?
+  
+  estimatedTimeMin Int            @default(25)
+  distanceKm      Float           @default(4.2)
+  weightKg        Float?          @default(2.5)
+  notes           String?
+  declaredValue   Float?
+  insuranceTier   String          @default("STANDARD")
+  
+  priceSubtotal   Float
+  priceSurge      Float           @default(0.0)
+  priceInsurance  Float           @default(0.0)
+  priceTotal      Float
+  
+  paymentMethod   String          @default("STRIPE_CARD")
+  isPaid          Boolean         @default(true)
+  packagePhotoUrl String?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  deliveredAt     DateTime?
+  
+  review          Review?
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  rating    Int      @default(5)
+  comment   String?
+  createdAt DateTime @default(now())
+}
