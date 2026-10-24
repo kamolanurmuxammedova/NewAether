@@ -16,6 +16,9 @@ export default function ErrorBoundary({
   }, [error]);
 
   return (
+    
+    
+    
     <div className="min-h-[75vh] flex items-center justify-center px-4 bg-[#09090B] text-center">
       <div className="max-w-md space-y-6">
         <div className="w-16 h-16 rounded-3xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto shadow-xl">
