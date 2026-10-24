@@ -1,0 +1,381 @@
+@import "tailwindcss";
+
+:root {
+  --background: #09090B;
+  --foreground: #F4F4F5;
+  --card: #111217;
+  --card-foreground: #F4F4F5;
+  --popover: #111217;
+  --popover-foreground: #F4F4F5;
+  --primary: #7C3AED;
+  --primary-foreground: #FFFFFF;
+  --secondary: #18181B;
+  --secondary-foreground: #A1A1AA;
+  --muted: #1E1F26;
+  --muted-foreground: #71717A;
+  --accent: #6366F1;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #7C3AED;
+  --radius: 1rem;
+}
+
+body {
+  background-color: #09090B;
+  color: #F4F4F5;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  overflow-x: hidden;
+  selection-background-color: #7C3AED;
+  selection-color: #FFFFFF;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+::selection {
+  background: #7C3AED;
+  color: #FFFFFF;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272A;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3F3F46;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(17, 18, 23, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.glass-card {
+  background: rgba(16, 17, 22, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.glass-input {
+  background: rgba(20, 21, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #F4F4F5;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-input:focus {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+  outline: none;
+}
+
+/* Gradient accents - Soft, calm, elegant */
+.gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 30%, #E2E8F0 70%, #CBD5E1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-accent-text {
+  background: linear-gradient(135deg, #FFFFFF 0%, #DDD6FE 55%, #C4B5FD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-btn {
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important;
+  color: #FFFFFF !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(79, 70, 229, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+.gradient-btn:hover {
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%) !important;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
+  transform: translateY(-0.5px);
+}
+
+.gradient-btn * {
+  color: #FFFFFF !important;
+}
+
+.glow-purple {
+  box-shadow: 0 0 30px -10px rgba(99, 102, 241, 0.15);
+}
+
+/* Ambient background glows - Toned down so it doesn't glare */
+.ambient-glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(140px);
+  pointer-events: none;
+  opacity: 0.12;
+  z-index: 0;
+}
+
+/* Leaflet Map Dark Inversion */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #09090B !important;
+  border-radius: 1.5rem;
+}
+
+.dark-tiles .leaflet-tile-pane {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+/* Radar pulse animation */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+.animate-radar {
+  animation: radar-pulse 3s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+/* ============================================================
+   LIGHT MODE DESIGN SYSTEM OVERRIDES (Default is Dark, Light on .light)
+   ============================================================ */
+
+html.light {
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #7C3AED;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #475569;
+  --muted: #E2E8F0;
+  --muted-foreground: #64748B;
+  --accent: #6366F1;
+  --accent-foreground: #FFFFFF;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.12);
+}
+
+html.light body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+html.light header {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Background elements in light mode */
+html.light .bg-\[\#09090B\] {
+  background-color: #F8FAFC !important;
+}
+
+html.light .bg-\[\#09090B\]\/85 {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+}
+
+html.light .bg-\[\#070709\] {
+  background-color: #F1F5F9 !important;
+}
+
+html.light .bg-\[\#111217\] {
+  background-color: #FFFFFF !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .bg-\[\#14151D\],
+html.light .bg-\[\#101116\],
+html.light .bg-\[\#15161F\],
+html.light .bg-\[\#171822\],
+html.light .bg-\[\#161724\],
+html.light .bg-\[\#13141C\],
+html.light .bg-\[\#0E0F14\],
+html.light .bg-\[\#12131A\] {
+  background-color: #FFFFFF !important;
+}
+
+html.light .from-\[\#14151D\],
+html.light .from-\[\#15161F\],
+html.light .from-\[\#13141C\] {
+  --tw-gradient-from: #FFFFFF var(--tw-gradient-from-position) !important;
+}
+
+html.light .to-\[\#0E0F14\],
+html.light .to-\[\#171822\],
+html.light .to-\[\#161724\],
+html.light .to-\[\#12131A\] {
+  --tw-gradient-to: #F1F5F9 var(--tw-gradient-to-position) !important;
+}
+
+html.light .via-\[\#101116\],
+html.light .via-\[\#0E0F14\] {
+  --tw-gradient-via: #F8FAFC var(--tw-gradient-via-position) !important;
+}
+
+/* Cards & Panels */
+html.light .glass-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.07), 0 0 1px 1px rgba(0, 0, 0, 0.06) !important;
+}
+
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .glass-input {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  color: #0F172A !important;
+}
+
+html.light .glass-input::placeholder {
+  color: #94A3B8 !important;
+}
+
+html.light .glass-input option {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+}
+
+/* Text overrides in Light Mode */
+html.light .text-white {
+  color: #0F172A !important;
+}
+
+html.light .text-zinc-100,
+html.light .text-zinc-200 {
+  color: #1E293B !important;
+}
+
+html.light .text-zinc-300 {
+  color: #334155 !important;
+}
+
+html.light .text-zinc-400 {
+  color: #64748B !important;
+}
+
+html.light .text-zinc-500 {
+  color: #64748B !important;
+}
+
+/* Gradients text on light background */
+html.light .gradient-text {
+  background: linear-gradient(135deg, #0F172A 0%, #4338CA 60%, #6366F1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html.light .gradient-accent-text {
+  background: linear-gradient(135deg, #6D28D9 0%, #4F46E5 50%, #2563EB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Borders in Light Mode */
+html.light .border-white\/5,
+html.light .border-white\/10,
+html.light .border-white\/20,
+html.light .border-white\/\[0\.04\],
+html.light .border-white\/\[0\.05\],
+html.light .border-white\/\[0\.06\],
+html.light .border-white\/\[0\.07\],
+html.light .border-white\/\[0\.08\] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Transparent backgrounds */
+html.light .bg-white\/\[0\.02\],
+html.light .bg-white\/\[0\.03\],
+html.light .bg-white\/\[0\.04\],
+html.light .bg-white\/\[0\.05\],
+html.light .bg-white\/\[0\.06\],
+html.light .bg-white\/5,
+html.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+html.light .bg-black\/40,
+html.light .bg-black\/60 {
+  background-color: #F1F5F9 !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Specific elements that MUST keep white text */
+html.light .gradient-btn,
+html.light .gradient-btn *,
+html.light [class*="gradient-btn"],
+html.light .bg-purple-600,
+html.light .bg-purple-600 *,
+html.light .bg-indigo-600,
+html.light .bg-indigo-600 *,
+html.light .bg-emerald-600,
+html.light .bg-emerald-600 *,
+html.light .bg-red-600,
+html.light .bg-red-600 *,
+html.light .badge-white-text,
+html.light .text-force-white {
+  color: #FFFFFF !important;
+}
+
+/* Scrollbar for Light Mode */
+html.light ::-webkit-scrollbar-track {
+  background: #F8FAFC !important;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #CBD5E1 !important;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8 !important;
+}
+
+/* Map vector colors for Light Mode */
+html.light .delivery-map-bg {
+  fill: #F1F5F9 !important;
+}
+
+html.light .delivery-map-road {
+  stroke: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .delivery-map-avenue {
+  stroke: rgba(0, 0, 0, 0.04) !important;
+}
