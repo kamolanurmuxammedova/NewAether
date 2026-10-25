@@ -6,6 +6,7 @@ import { useOrderStore } from "@/store/use-order-store";
 import { DeliveryMap } from "@/components/map/DeliveryMap";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Coordinates } from "@/types";
+import { useTranslation } from "@/lib/i18n";
 import {
   Zap,
   Phone,
@@ -19,6 +20,7 @@ import {
 
 function TrackOrderContent() {
   const router = useRouter();
+  const t = useTranslation();
   const searchParams = useSearchParams();
   const orderNumParam = searchParams.get("order");
 
@@ -39,7 +41,16 @@ function TrackOrderContent() {
   const [ratingVal, setRatingVal] = useState(5);
   const [tipVal, setTipVal] = useState(10);
   const [chatMessages, setChatMessages] = useState([
-    { sender: "courier", text: "Здравствуйте! Забрал ваш груз, поместил в защитный термобокс и двигаюсь по зеленому коридору.", time: "4м назад" },
+    {
+      sender: "courier",
+      text:
+        t.lang === "uz"
+          ? "Assalomu alaykum! Yukingizni oldim, termoboksga joyladim va yashil koridor bo'ylab harakatlanmoqdaman."
+          : t.lang === "en"
+          ? "Hello! I've picked up your cargo, secured it in the thermal pod, and am moving along the green corridor."
+          : "Здравствуйте! Забрал ваш груз, поместил в защитный термобокс и двигаюсь по зеленому коридору.",
+      time: "4м назад",
+    },
   ]);
   const [newMsg, setNewMsg] = useState("");
 
@@ -66,14 +77,18 @@ function TrackOrderContent() {
 
   if (!currentOrder) {
     return (
-      <div className="py-20 text-center min-h-[60vh] flex flex-col items-center justify-center">
-        <h2 className="text-2xl font-bold text-white mb-2">Активная телеметрия не найдена</h2>
-        <p className="text-sm text-zinc-400 mb-6">Оформите заказ, чтобы отслеживать движение со спутника.</p>
+      <div className="py-20 text-center min-h-[60vh] flex flex-col items-center justify-center font-mono">
+        <h2 className="text-2xl font-bold text-white mb-2">
+          {t.lang === "uz" ? "Faol telemetriya topilmadi" : t.lang === "en" ? "No active telemetry found" : "Активная телеметрия не найдена"}
+        </h2>
+        <p className="text-sm text-zinc-400 mb-6 font-sans">
+          {t.lang === "uz" ? "Sun'iy yo'ldosh orqali kuzatish uchun buyurtma bering." : t.lang === "en" ? "Place an order to track via satellite." : "Оформите заказ, чтобы отслеживать движение со спутника."}
+        </p>
         <button
           onClick={() => router.push("/book")}
           className="gradient-btn px-6 py-3 rounded-2xl text-xs font-bold text-white"
         >
-          Оформить доставку
+          {t.heroOrderBtn}
         </button>
       </div>
     );
@@ -91,7 +106,16 @@ function TrackOrderContent() {
     setTimeout(() => {
       setChatMessages((msgs) => [
         ...msgs,
-        { sender: "courier", text: "Вас понял! Подъезжаю ко входу.", time: "Только что" },
+        {
+          sender: "courier",
+          text:
+            t.lang === "uz"
+              ? "Tushundim! Kirish eshigi oldiga yetib kelmoqdaman."
+              : t.lang === "en"
+              ? "Understood! Arriving at the main entrance."
+              : "Вас понял! Подъезжаю ко входу.",
+          time: "Только что",
+        },
       ]);
     }, 1500);
   };
@@ -102,11 +126,11 @@ function TrackOrderContent() {
   };
 
   const statusSteps = [
-    { label: "Принят", status: "ACCEPTED" },
-    { label: "Назначен", status: "COURIER_ASSIGNED" },
-    { label: "Груз получен", status: "PICKING_UP" },
-    { label: "В пути", status: "IN_TRANSIT" },
-    { label: "Доставлен", status: "ARRIVED" },
+    { label: t.lang === "uz" ? "Qabul qilindi" : t.lang === "en" ? "Accepted" : "Принят", status: "ACCEPTED" },
+    { label: t.lang === "uz" ? "Biriktirildi" : t.lang === "en" ? "Assigned" : "Назначен", status: "COURIER_ASSIGNED" },
+    { label: t.lang === "uz" ? "Yuk olindi" : t.lang === "en" ? "Picked Up" : "Груз получен", status: "PICKING_UP" },
+    { label: t.lang === "uz" ? "Yo'lda" : t.lang === "en" ? "In Transit" : "В пути", status: "IN_TRANSIT" },
+    { label: t.lang === "uz" ? "Yetkazildi" : t.lang === "en" ? "Delivered" : "Доставлен", status: "ARRIVED" },
   ];
 
   return (
@@ -115,7 +139,7 @@ function TrackOrderContent() {
         {/* Top Control Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-[#111217] border border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
+            <div className="w-12 h-12 rounded-2xl bg-orange-500/20 text-orange-400 flex items-center justify-center font-bold text-sm">
               <Zap className="w-6 h-6 animate-pulse" />
             </div>
             <div>
@@ -126,7 +150,7 @@ function TrackOrderContent() {
                 </span>
               </div>
               <p className="text-xs text-zinc-400">
-                {currentOrder.category} • Оформлен {formatDate(currentOrder.createdAt)}
+                {currentOrder.category} • {formatDate(currentOrder.createdAt)}
               </p>
             </div>
           </div>
@@ -137,31 +161,31 @@ function TrackOrderContent() {
               onClick={() => setActiveTab("MAP")}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors ${
                 activeTab === "MAP"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-orange-600 text-white"
                   : "bg-white/[0.04] text-zinc-400 hover:text-white"
               }`}
             >
-              Радар телеметрии
+              {t.trackTabMap}
             </button>
             <button
               onClick={() => setActiveTab("CHAT")}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 activeTab === "CHAT"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-orange-600 text-white"
                   : "bg-white/[0.04] text-zinc-400 hover:text-white"
               }`}
             >
-              <MessageSquare className="w-3.5 h-3.5" /> Чат с курьером
+              <MessageSquare className="w-3.5 h-3.5" /> {t.trackTabChat}
             </button>
             <button
               onClick={() => setActiveTab("INVOICE")}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 activeTab === "INVOICE"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-orange-600 text-white"
                   : "bg-white/[0.04] text-zinc-400 hover:text-white"
               }`}
             >
-              <FileDown className="w-3.5 h-3.5" /> Накладная
+              <FileDown className="w-3.5 h-3.5" /> {t.trackTabInvoice}
             </button>
           </div>
         </div>
@@ -207,16 +231,24 @@ function TrackOrderContent() {
                 {/* Corridor Status Strip */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="p-4 rounded-2xl bg-[#111217] border border-white/5 text-center">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase block">Скорость движения</span>
-                    <span className="text-base font-bold text-white font-mono">38.4 км/ч</span>
+                    <span className="text-[10px] font-mono text-zinc-500 uppercase block">{t.trackSpeed}</span>
+                    <span className="text-base font-bold text-white font-mono">38.4 {t.lang === "uz" ? "km/s" : t.lang === "en" ? "km/h" : "км/ч"}</span>
                   </div>
                   <div className="p-4 rounded-2xl bg-[#111217] border border-white/5 text-center">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase block">Зеленый коридор</span>
-                    <span className="text-base font-bold text-emerald-400 font-mono">Свободен</span>
+                    <span className="text-[10px] font-mono text-zinc-500 uppercase block">
+                      {t.lang === "uz" ? "Yashil koridor" : t.lang === "en" ? "Green Corridor" : "Зеленый коридор"}
+                    </span>
+                    <span className="text-base font-bold text-emerald-400 font-mono">
+                      {t.lang === "uz" ? "Erkin" : t.lang === "en" ? "Clear" : "Свободен"}
+                    </span>
                   </div>
                   <div className="p-4 rounded-2xl bg-[#111217] border border-white/5 text-center">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase block">Пломба бокса</span>
-                    <span className="text-base font-bold text-indigo-400 font-mono">Опломбирован 100%</span>
+                    <span className="text-[10px] font-mono text-zinc-500 uppercase block">
+                      {t.lang === "uz" ? "Boks holati" : t.lang === "en" ? "Pod Seal" : "Пломба бокса"}
+                    </span>
+                    <span className="text-base font-bold text-orange-400 font-mono">
+                      {t.lang === "uz" ? "Muhrlangan 100%" : t.lang === "en" ? "100% Sealed" : "Опломбирован 100%"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -391,13 +423,13 @@ function TrackOrderContent() {
                   href="tel:+19175558831"
                   className="px-3 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-colors"
                 >
-                  <Phone className="w-3.5 h-3.5 text-emerald-400" /> Звонок
+                  <Phone className="w-3.5 h-3.5 text-emerald-400" /> {t.trackCallCourier}
                 </a>
                 <button
                   onClick={() => setIsRatingOpen(true)}
                   className="px-3 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition-colors"
                 >
-                  <Star className="w-3.5 h-3.5 text-amber-400" /> Оценить
+                  <Star className="w-3.5 h-3.5 text-amber-400" /> {t.trackRateOrder}
                 </button>
               </div>
             </div>
@@ -408,7 +440,8 @@ function TrackOrderContent() {
                 onClick={() => router.push("/book")}
                 className="w-full gradient-btn py-3 rounded-2xl text-xs font-bold text-white flex items-center justify-center gap-2 shadow-lg"
               >
-                <RotateCcw className="w-3.5 h-3.5" /> Повторить эту доставку
+                <RotateCcw className="w-3.5 h-3.5" />
+                {t.lang === "uz" ? "Yetkazishni takrorlash" : t.lang === "en" ? "Repeat this dispatch" : "Повторить эту доставку"}
               </button>
 
               {currentOrder.status !== "CANCELLED" && currentOrder.status !== "DELIVERED" && (
@@ -416,7 +449,7 @@ function TrackOrderContent() {
                   onClick={() => setIsCancelOpen(true)}
                   className="w-full py-2.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-xs font-semibold text-red-400 border border-red-500/20 transition-colors"
                 >
-                  Отменить вызов курьера
+                  {t.trackCancelOrder}
                 </button>
               )}
             </div>

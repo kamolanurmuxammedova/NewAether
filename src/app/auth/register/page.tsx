@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUserStore } from "@/store/use-user-store";
 import { playClickSound, playSuccessSound } from "@/lib/sound";
+import { useTranslation } from "@/lib/i18n";
 import {
   Zap,
   Lock,
@@ -24,6 +25,7 @@ import {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslation();
   const { registerAccount } = useUserStore();
 
   const [role, setRole] = useState<"USER" | "COURIER" | "ADMIN">("USER");
@@ -219,10 +221,10 @@ export default function RegisterPage() {
               </div>
 
               <h1 className="text-2xl font-black text-white tracking-tight mb-1">
-                Регистрация
+                {t.authModalRegisterBtn}
               </h1>
               <p className="text-zinc-400 text-xs mb-6 font-sans">
-                Выберите роль и заполните профиль для доступа к платформе.
+                {t.lang === "uz" ? "Platformaga kirish uchun rolni tanlang va profilingizni to'ldiring." : t.lang === "en" ? "Select a role and complete your profile to access the platform." : "Выберите роль и заполните профиль для доступа к платформе."}
               </p>
 
               {/* Role selector */}
@@ -410,15 +412,21 @@ export default function RegisterPage() {
                   whileTap={{ scale: 0.98 }}
                   className="w-full gradient-btn py-2.5 text-xs font-bold text-white flex items-center justify-center gap-1.5 mt-2"
                 >
-                  <span>{isLoading ? "Регистрация..." : "Зарегистрировать аккаунт"}</span>
+                  <span>
+                    {isLoading
+                      ? t.lang === "uz" ? "Ro'yxatdan o'tkazilmoqda..." : t.lang === "en" ? "Registering..." : "Регистрация..."
+                      : t.authModalRegisterBtn}
+                  </span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </motion.button>
               </form>
 
               <div className="text-center pt-4 border-t border-zinc-800 text-xs mt-5">
-                <span className="text-zinc-400">Уже есть аккаунт? </span>
+                <span className="text-zinc-400">
+                  {t.lang === "uz" ? "Hisobingiz bormi?" : t.lang === "en" ? "Already have an account?" : "Уже есть аккаунт?"}{" "}
+                </span>
                 <Link href="/auth/login" className="text-orange-400 font-bold hover:underline">
-                  Войти
+                  {t.navLoginBtn}
                 </Link>
               </div>
             </motion.div>

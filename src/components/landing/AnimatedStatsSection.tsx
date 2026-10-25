@@ -65,7 +65,7 @@ export function AnimatedStatsSection() {
 
   const statsList = [
     { value: 1247, suffix: "+", label: t.statDeliveredToday, prefix: "" },
-    { value: 14, suffix: " мин", label: t.statAvgTimeMin, prefix: "~" },
+    { value: 14, suffix: t.timeMinSuffix, label: t.statAvgTimeMin, prefix: "~" },
     { value: 99.98, suffix: "%", label: t.statSla, prefix: "" },
     { value: 84, suffix: "", label: t.statOnlineCouriers, prefix: "" },
   ];

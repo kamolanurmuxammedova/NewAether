@@ -1,51 +1,52 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import { motion, useInView } from "framer-motion";
 import { Star, Sparkles } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 export function TestimonialsSection() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const t = useTranslation();
 
-  const reviews = [
-    {
-      name: "Эвелин Вэнс",
-      role: "Управляющий партнер, Vance Capital",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
-      content:
-        "Мы перевели всю корпоративную курьерскую службу на AETHER. Договоры и банковские обязательства, которые раньше шли 2 часа через весь Манхэттен, теперь доставляются быстрее 18 минут с абсолютной гарантией.",
-      rating: 5,
-      cargoClass: "Конфиденциальные документы",
-    },
-    {
-      name: "Дэвид Стерлинг",
-      role: "Вице-президент по разработке, Quantum Lab",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-      content:
-        "Гиростабилизированные кейсы с пневмоподвеской и непрерывная телеметрия вибраций дают нам 100% уверенность при перемещении опытных образцов микроэлектроники стоимостью в сотни тысяч долларов.",
-      rating: 5,
-      cargoClass: "Ценные прототипы и чипы",
-    },
-    {
-      name: "Шеф-повар Антуан Лоран",
-      role: "Шеф-повар, L'Horizon NY",
-      avatar: "https://images.unsplash.com/photo-1583394293214-28ded15ee548?w=150&auto=format&fit=crop&q=80",
-      content:
-        "До AETHER доставка ресторанных сетов была невозможна без нарушения композиции блюда. Их термобоксы доставляют гастрономические шедевры в точности такими, какими они вышли из-под ножа.",
-      rating: 5,
-      cargoClass: "Ресторанная гастрономия",
-    },
-    {
-      name: "София Чен",
-      role: "Директор по логистике, Lumina Tech",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-      content:
-        "REST и GraphQL API платформы — эталон простоты и надежности. Мы программно отправляем более 4 000 заказов ежемесячно. За 14 месяцев работы — ни единого инцидента.",
-      rating: 5,
-      cargoClass: "Корпоративный API",
-    },
-  ];
+  const reviews = useMemo(
+    () => [
+      {
+        name: t.testRev1Author,
+        role: t.testRev1Role,
+        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+        content: t.testRev1Content,
+        rating: 5,
+        cargoClass: t.testRev1Class,
+      },
+      {
+        name: t.testRev2Author,
+        role: t.testRev2Role,
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+        content: t.testRev2Content,
+        rating: 5,
+        cargoClass: t.testRev2Class,
+      },
+      {
+        name: t.testRev3Author,
+        role: t.testRev3Role,
+        avatar: "https://images.unsplash.com/photo-1583394293214-28ded15ee548?w=150&auto=format&fit=crop&q=80",
+        content: t.testRev3Content,
+        rating: 5,
+        cargoClass: t.testRev3Class,
+      },
+      {
+        name: t.testRev4Author,
+        role: t.testRev4Role,
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        content: t.testRev4Content,
+        rating: 5,
+        cargoClass: t.testRev4Class,
+      },
+    ],
+    [t]
+  );
 
   return (
     <motion.section
@@ -60,15 +61,13 @@ export function TestimonialsSection() {
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-500/10 border border-orange-500/30 text-orange-400 text-[11px] font-mono uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Репутация и доверие</span>
+            <span>{t.testBadge}</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-            Выбор{" "}
-            <span className="text-orange-500">лидеров индустрии</span>
+            {t.testTitle}
           </h2>
           <p className="text-sm sm:text-base text-zinc-400 font-sans">
-            Нам доверяют требовательные семейные офисы, юридические компании,
-            мишленовские рестораны и технологические лидеры.
+            {t.testSubtitle}
           </p>
         </div>
 

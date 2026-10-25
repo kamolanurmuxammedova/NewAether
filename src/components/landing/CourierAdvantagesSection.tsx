@@ -1,39 +1,45 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { Bike, DollarSign, Zap, Shield, ArrowRight, Award } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 export function CourierAdvantagesSection() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
-  const benefits = [
-    {
-      icon: DollarSign,
-      title: "$48.50 / час доход",
-      desc: "Ведущие городские курьеры зарабатывают по максимальным ставкам со 100% чаевых.",
-      badge: "ВЫСОКИЙ ДОХОД",
-    },
-    {
-      icon: Zap,
-      title: "Мгновенные выплаты",
-      desc: "Выводите средства сразу после рейса на карту или кошелек без задержек.",
-      badge: "МОМЕНТАЛЬНО",
-    },
-    {
-      icon: Bike,
-      title: "Субсидии на транспорт",
-      desc: "Беспроцентная аренда фирменных электроскутеров и грузовых электробайков.",
-      badge: "100% ЭКО",
-    },
-    {
-      icon: Shield,
-      title: "Безопасность и страховка",
-      desc: "Никаких наличных. Свободный пропуск в лобби премиум-зданий и страховка.",
-      badge: "ПРОТОКОЛ VIP",
-    },
-  ];
+  const t = useTranslation();
+
+  const benefits = useMemo(
+    () => [
+      {
+        icon: DollarSign,
+        title: t.courierBenefit1Title,
+        desc: t.courierBenefit1Desc,
+        badge: t.courierBenefit1Badge,
+      },
+      {
+        icon: Zap,
+        title: t.courierBenefit2Title,
+        desc: t.courierBenefit2Desc,
+        badge: t.courierBenefit2Badge,
+      },
+      {
+        icon: Bike,
+        title: t.courierBenefit3Title,
+        desc: t.courierBenefit3Desc,
+        badge: t.courierBenefit3Badge,
+      },
+      {
+        icon: Shield,
+        title: t.courierBenefit4Title,
+        desc: t.courierBenefit4Desc,
+        badge: t.courierBenefit4Badge,
+      },
+    ],
+    [t]
+  );
 
   return (
     <motion.section
@@ -50,16 +56,16 @@ export function CourierAdvantagesSection() {
             <div className="lg:col-span-5 space-y-4 font-mono">
               <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-orange-500/10 border border-orange-500/30 text-orange-400 text-[10px] uppercase">
                 <Award className="w-3.5 h-3.5" />
-                <span>ОПЕРАТОРЫ ФЛОТА AETHER</span>
+                <span>{t.courierBadge}</span>
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-sans">
-                Станьте частью <br />
-                <span className="text-orange-500">городского флота</span>
+                {t.courierTitle} <br />
+                <span className="text-orange-500">{t.courierTitleAccent}</span>
               </h2>
 
               <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-sans">
-                Управляйте собственным расписанием, получайте доступ к приоритетным скоростным коридорам и прозрачным алгоритмическим выплатам.
+                {t.courierSubtitle}
               </p>
 
               <div className="pt-2">
@@ -67,7 +73,7 @@ export function CourierAdvantagesSection() {
                   href="/courier"
                   className="gradient-btn inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white"
                 >
-                  <span>Открыть панель курьера</span>
+                  <span>{t.courierCtaBtn}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

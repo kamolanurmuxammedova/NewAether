@@ -1,40 +1,27 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { ChevronDown, HelpCircle } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 export function FaqSection() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const t = useTranslation();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-  const faqs = [
-    {
-      q: "Как AETHER достигает среднего времени доставки по городу в 14 минут?",
-      a: "AETHER использует собственный нейронный алгоритм диспетчеризации в связке с телеметрией муниципальных зеленых коридоров. Курьеры передвигаются на быстрых электроскутерах и байках, полностью объезжая заторы. Назначение курьера происходит быстрее 400 мс без промежуточных сортировочных баз.",
-    },
-    {
-      q: "Какая страховка и защита распространяются на груз?",
-      a: "Каждое отправление включает базовую защиту до $5 000 USD. Для особо ценных активов, секретных документов и электроники действует пакет Concierge Total Cover от синдиката Lloyd's of London с покрытием до $250 000 USD без франшизы.",
-    },
-    {
-      q: "Как работает биометрическая передача груза?",
-      a: "При прибытии курьера получатель подтверждает личность динамическим зашифрованным PIN-кодом из приложения или сканированием лица. После верификации электронный замок контейнера отпирается, а в ваш цифровой сейф записывается безотзывная цифровая накладная с точными геометками и временем.",
-    },
-    {
-      q: "Могут ли корпоративные клиенты подключиться через API?",
-      a: "Да. Мы предоставляем полностью типизированные REST и GraphQL API, вебхуки и готовые интеграции для 1C, SAP, Oracle NetSuite и кастомных систем WMS. Команда разработчиков может запустить автоматический вызов менее чем за час.",
-    },
-    {
-      q: "Какие виды транспорта входят во флот AETHER?",
-      a: "Весь флот состоит из электротранспорта с нулевыми выбросами: кастомные Cyber Scooter, гиростабилизированные грузовые электробайки, представительские седаны Tesla Model S, фургоны Mercedes eVito и аэро-дроны в тестовых коридорах.",
-    },
-    {
-      q: "Как отбираются и сертифицируются курьеры?",
-      a: "Лишь 4.8% кандидатов проходят отбор в флот AETHER. Каждый курьер проходит глубокую проверку безопасности, обучение премиальному этикету и сертификацию по обращению с особо ценными и конфиденциальными грузами.",
-    },
-  ];
+  const faqs = useMemo(
+    () => [
+      { q: t.faqQ1, a: t.faqA1 },
+      { q: t.faqQ2, a: t.faqA2 },
+      { q: t.faqQ3, a: t.faqA3 },
+      { q: t.faqQ4, a: t.faqA4 },
+      { q: t.faqQ5, a: t.faqA5 },
+      { q: t.faqQ6, a: t.faqA6 },
+    ],
+    [t]
+  );
 
   return (
     <motion.section
@@ -56,13 +43,13 @@ export function FaqSection() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-500/10 border border-orange-500/30 text-orange-400 text-[11px] font-mono uppercase tracking-wider">
             <HelpCircle className="w-3.5 h-3.5" />
-            <span>Операционная архитектура</span>
+            <span>{t.faqBadge}</span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-            Часто задаваемые <span className="gradient-accent-text">вопросы</span>
+          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+            {t.faqTitle}
           </h2>
           <p className="text-sm text-zinc-400">
-            Всё о безопасности, страховании, алгоритмах диспетчеризации и интеграциях.
+            {t.faqSubtitle}
           </p>
         </motion.div>
 
@@ -78,7 +65,7 @@ export function FaqSection() {
                 viewport={{ once: true, margin: "-20px" }}
                 transition={{ duration: 0.5, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
                 className={`rounded-2xl border bg-[#111217] overflow-hidden transition-colors duration-200 ${
-                  isOpen ? "border-purple-500/30" : "border-white/5"
+                  isOpen ? "border-orange-500/30" : "border-white/5"
                 }`}
               >
                 <button
@@ -94,7 +81,7 @@ export function FaqSection() {
                     transition={{ duration: 0.25, ease: "easeInOut" }}
                     className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border transition-colors ${
                       isOpen
-                        ? "bg-purple-500/10 border-purple-500/30 text-purple-400"
+                        ? "bg-orange-500/10 border-orange-500/30 text-orange-400"
                         : "bg-white/[0.04] border-white/10 text-zinc-400"
                     }`}
                   >
@@ -112,7 +99,7 @@ export function FaqSection() {
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-zinc-400 leading-relaxed border-t border-white/5 pt-4">
+                      <div className="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-zinc-400 leading-relaxed border-t border-white/5 pt-4 font-sans">
                         {faq.a}
                       </div>
                     </motion.div>

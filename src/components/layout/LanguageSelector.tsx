@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useUserStore } from "@/store/use-user-store";
 import { Globe } from "lucide-react";
 import { playClickSound } from "@/lib/sound";
@@ -14,8 +14,20 @@ const LANGUAGES = [
 export function LanguageSelector() {
   const { language, setLanguage } = useUserStore();
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const currentLang = (language?.toLowerCase() === "en" ? "en" : language?.toLowerCase() === "uz" ? "uz" : "ru");
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
 
   const handleSelect = (code: string) => {
     playClickSound();
@@ -24,7 +36,7 @@ export function LanguageSelector() {
   };
 
   return (
-    <div className="relative font-mono text-xs">
+    <div ref={dropdownRef} className="relative font-mono text-xs">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}

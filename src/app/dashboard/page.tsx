@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useUserStore } from "@/store/use-user-store";
 import { useOrderStore } from "@/store/use-order-store";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 import {
   LayoutDashboard,
   Package,
@@ -36,6 +37,7 @@ export default function UserDashboardPage() {
   } = useUserStore();
 
   const { orders } = useOrderStore();
+  const t = useTranslation();
 
   const [activeTab, setActiveTab] = useState<
     "overview" | "deliveries" | "wallet" | "addresses" | "coupons" | "security" | "support"
@@ -126,28 +128,28 @@ export default function UserDashboardPage() {
               className="gradient-btn px-5 py-2.5 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg"
             >
               <Wallet className="w-4 h-4" />
-              <span>Пополнить сейф</span>
+              <span>{t.dashTopUpBtn}</span>
             </button>
             <Link
               href="/book"
               className="px-5 py-2.5 rounded-2xl text-xs font-bold text-white bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 transition-colors flex items-center gap-2"
             >
-              <Zap className="w-4 h-4 text-indigo-400" />
-              <span>Новый вызов</span>
+              <Zap className="w-4 h-4 text-orange-400" />
+              <span>{t.navOrderBtn}</span>
             </Link>
           </div>
         </div>
 
         {/* Navigation Tabs Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-white/10 scrollbar-none">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-white/10 scrollbar-none font-mono">
           {[
-            { id: "overview", label: "Обзор", icon: LayoutDashboard },
-            { id: "deliveries", label: "Доставки", icon: Package, badge: activeOrders.length },
-            { id: "wallet", label: "Цифровой сейф", icon: Wallet },
-            { id: "addresses", label: "Адреса", icon: MapPin },
-            { id: "coupons", label: "Промокоды", icon: Ticket },
-            { id: "security", label: "Безопасность", icon: Shield },
-            { id: "support", label: "Консьерж 24/7", icon: Headphones },
+            { id: "overview", label: t.dashTabOverview, icon: LayoutDashboard },
+            { id: "deliveries", label: t.dashTabDeliveries, icon: Package, badge: activeOrders.length },
+            { id: "wallet", label: t.dashTabWallet, icon: Wallet },
+            { id: "addresses", label: t.dashTabAddresses, icon: MapPin },
+            { id: "coupons", label: t.dashTabCoupons, icon: Ticket },
+            { id: "security", label: t.dashTabSecurity, icon: Shield },
+            { id: "support", label: t.dashTabSupport, icon: Headphones },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

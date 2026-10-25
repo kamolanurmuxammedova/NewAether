@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useOrderStore } from "@/store/use-order-store";
 import { useUserStore } from "@/store/use-user-store";
-import { CATEGORIES, SPEED_TIERS, VEHICLE_OPTIONS, PRESET_ADDRESSES } from "@/lib/constants";
+import { SPEED_TIERS, VEHICLE_OPTIONS, PRESET_ADDRESSES } from "@/lib/constants";
 import { PackageCategory } from "@/types";
 import { DeliveryMap } from "@/components/map/DeliveryMap";
 import { formatCurrency } from "@/lib/utils";
+import { useTranslation, getLocalizedCategories } from "@/lib/i18n";
 import confetti from "canvas-confetti";
 import {
   MapPin,
@@ -61,6 +62,8 @@ function BookDeliveryContent() {
   } = useOrderStore();
 
   const { walletBalance, deductWallet, isAuthenticated, language } = useUserStore();
+  const t = useTranslation(language);
+  const categories = useMemo(() => getLocalizedCategories(t), [t]);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -160,11 +163,11 @@ function BookDeliveryContent() {
   };
 
   const stepsList = [
-    { num: 1, label: "Параметры груза" },
-    { num: 2, label: "Маршрут и карта" },
-    { num: 3, label: "Скорость и флот" },
-    { num: 4, label: "Безопасность" },
-    { num: 5, label: "Оплата и вызов" },
+    { num: 1, label: t.lang === "uz" ? "Yuk parametrlari" : t.lang === "en" ? "Cargo Specs" : "Параметры груза" },
+    { num: 2, label: t.lang === "uz" ? "Marshrut va xarita" : t.lang === "en" ? "Route & Map" : "Маршрут и карта" },
+    { num: 3, label: t.lang === "uz" ? "Tezlik va transport" : t.lang === "en" ? "Speed & Fleet" : "Скорость и флот" },
+    { num: 4, label: t.lang === "uz" ? "Xavfsizlik" : t.lang === "en" ? "Security" : "Безопасность" },
+    { num: 5, label: t.lang === "uz" ? "To'lov va chaqiruv" : t.lang === "en" ? "Payment & Dispatch" : "Оплата и вызов" },
   ];
 
   return (
@@ -236,7 +239,7 @@ function BookDeliveryContent() {
                     Классификация груза (12 вариантов)
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
-                    {CATEGORIES.map((cat) => (
+                    {categories.map((cat) => (
                       <button
                         key={cat.id}
                         type="button"
@@ -249,7 +252,7 @@ function BookDeliveryContent() {
                       >
                         <span className="font-bold text-xs sm:text-sm block leading-tight">{cat.name.split(" ")[0]}</span>
                         <div className="flex items-center justify-between text-[10px] text-zinc-500 pt-1">
-                          <span>от ${cat.basePrice.toFixed(2)}</span>
+                          <span>{t.catBaseRateFrom} ${cat.basePrice.toFixed(2)}</span>
                           {cat.popular && <Sparkles className="w-3 h-3 text-amber-400" />}
                         </div>
                       </button>
@@ -765,7 +768,7 @@ function BookDeliveryContent() {
                   onClick={handlePrevStep}
                   className="px-5 py-3 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold text-zinc-300 flex items-center gap-2 transition-colors"
                 >
-                  <ArrowLeft className="w-4 h-4" /> Назад
+                  <ArrowLeft className="w-4 h-4" /> {t.bookBackBtn}
                 </button>
               ) : (
                 <div />
@@ -777,7 +780,7 @@ function BookDeliveryContent() {
                   onClick={handleNextStep}
                   className="gradient-btn px-7 py-3 rounded-2xl text-xs font-bold text-white flex items-center gap-2 shadow-lg"
                 >
-                  Продолжить <ArrowRight className="w-4 h-4" />
+                  {t.bookNextBtn} <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 <button
@@ -789,12 +792,12 @@ function BookDeliveryContent() {
                   {isSubmitting ? (
                     <span className="flex items-center gap-2">
                       <Zap className="w-4 h-4 animate-spin text-amber-400" />
-                      Бронирование коридора...
+                      {t.lang === "uz" ? "Koridor band qilinmoqda..." : t.lang === "en" ? "Booking corridor..." : "Бронирование коридора..."}
                     </span>
                   ) : (
                     <span className="flex items-center gap-2">
                       <Zap className="w-4 h-4" />
-                      Вызвать квантового курьера ({formatCurrency(pricing.total)})
+                      {t.bookConfirmBtn} ({formatCurrency(pricing.total)})
                     </span>
                   )}
                 </button>
@@ -890,10 +893,10 @@ function BookDeliveryContent() {
 
             <div className="space-y-1.5">
               <h3 className="text-lg font-bold text-white tracking-tight">
-                Требуется авторизация
+                {t.authModalTitle}
               </h3>
               <p className="text-xs text-zinc-400 font-sans leading-relaxed">
-                Чтобы подтвердить заказ и получить трек-номер со спутниковой телеметрией, войдите в аккаунт или зарегистрируйтесь.
+                {t.authModalDesc}
               </p>
             </div>
 
@@ -903,7 +906,7 @@ function BookDeliveryContent() {
                 onClick={() => router.push("/auth/login?redirect=/book")}
                 className="w-full gradient-btn py-2.5 text-xs font-bold text-white flex items-center justify-center gap-2"
               >
-                <span>Войти в аккаунт</span>
+                <span>{t.authModalLoginBtn}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
 
@@ -912,7 +915,7 @@ function BookDeliveryContent() {
                 onClick={() => router.push("/auth/register?redirect=/book")}
                 className="w-full py-2.5 text-xs font-bold text-zinc-300 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:text-white transition-colors"
               >
-                Создать новый аккаунт
+                {t.authModalRegisterBtn}
               </button>
 
               <button
@@ -920,7 +923,7 @@ function BookDeliveryContent() {
                 onClick={() => setShowAuthModal(false)}
                 className="text-[11px] text-zinc-500 hover:text-zinc-400 underline block w-full pt-1"
               >
-                Вернуться к параметрам заказа
+                {t.authModalCancelBtn}
               </button>
             </div>
           </div>

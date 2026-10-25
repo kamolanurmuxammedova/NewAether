@@ -257,7 +257,7 @@ export function Navbar() {
                       onClick={() => setIsProfileOpen(false)}
                       className="block px-2 py-1 text-zinc-300 hover:bg-zinc-800 hover:text-white"
                     >
-                      Личный кабинет
+                      {t.navCabinet}
                     </Link>
 
                     <Link
@@ -265,7 +265,7 @@ export function Navbar() {
                       onClick={() => setIsProfileOpen(false)}
                       className="block px-2 py-1 text-zinc-300 hover:bg-zinc-800 hover:text-white"
                     >
-                      Панель курьера
+                      {t.navCourier}
                     </Link>
 
                     <Link
@@ -273,7 +273,7 @@ export function Navbar() {
                       onClick={() => setIsProfileOpen(false)}
                       className="block px-2 py-1 text-orange-400 hover:bg-zinc-800 font-bold"
                     >
-                      Админ-панель
+                      {t.navAdmin}
                     </Link>
 
                     <button

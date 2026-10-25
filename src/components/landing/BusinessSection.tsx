@@ -1,21 +1,27 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { Building2, ArrowRight, Check } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 export function BusinessSection() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
-  const enterprisePerks = [
-    "REST и GraphQL API логистики с поддержкой вебхуков",
-    "Выделенные курьеры с персональным допуском в ваши локации",
-    "Консолидированные институциональные инвойсы и НДС-отчеты",
-    "Финансовый SLA со 100% компенсацией при нарушении сроков",
-    "Оптимизатор мульти-маршрутов (до 250 точек за один рейс)",
-    "Круглосуточный консьерж и личный диспетчер флота 24/7",
-  ];
+  const t = useTranslation();
+
+  const enterprisePerks = useMemo(
+    () => [
+      t.bizPerk1,
+      t.bizPerk2,
+      t.bizPerk3,
+      t.bizPerk4,
+      t.bizPerk5,
+      t.bizPerk6,
+    ],
+    [t]
+  );
 
   return (
     <motion.section
@@ -31,16 +37,16 @@ export function BusinessSection() {
           <div className="lg:col-span-6 space-y-5">
             <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-orange-500/10 border border-orange-500/30 text-orange-400 text-[10px] font-mono uppercase">
               <Building2 className="w-3.5 h-3.5" />
-              <span>ДЛЯ КОРПОРАТИВНЫХ КЛИЕНТОВ</span>
+              <span>{t.bizBadge}</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              Выделенный флот <br />
-              <span className="text-orange-500">без капитальных затрат</span>
+              {t.bizTitle} <br />
+              <span className="text-orange-500">{t.bizTitleAccent}</span>
             </h2>
 
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed font-sans">
-              Оснастите ритейл, юридическую компанию или лабораторию инфраструктурой скоростной доставки. Интеграция API за считанные минуты.
+              {t.bizSubtitle}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
@@ -59,7 +65,7 @@ export function BusinessSection() {
                 href="/dashboard"
                 className="gradient-btn px-5 py-2.5 text-xs font-bold text-white flex items-center gap-1.5"
               >
-                <span>Подключить бизнес-аккаунт</span>
+                <span>{t.bizCtaBtn}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
 
@@ -67,7 +73,7 @@ export function BusinessSection() {
                 href="/admin"
                 className="px-4 py-2.5 rounded-sm bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-xs font-mono text-zinc-300 transition-colors"
               >
-                API документация
+                {t.bizDocsBtn}
               </Link>
             </div>
           </div>

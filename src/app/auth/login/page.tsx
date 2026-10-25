@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUserStore } from "@/store/use-user-store";
 import { playClickSound, playSuccessSound } from "@/lib/sound";
+import { useTranslation } from "@/lib/i18n";
 import {
   Zap,
   Lock,
@@ -23,6 +24,7 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslation();
   const { validateLogin, login } = useUserStore();
 
   const [email, setEmail] = useState("alexander.vance@vance-holdings.com");
@@ -177,16 +179,16 @@ export default function LoginPage() {
               </div>
 
               <h1 className="text-2xl font-black text-white tracking-tight mb-1 font-mono">
-                Вход в систему
+                {t.authModalLoginBtn}
               </h1>
               <p className="text-zinc-400 text-sm mb-8 font-sans">
-                Введите данные для доступа к кабинету.
+                {t.lang === "uz" ? "Kabinetga kirish uchun ma'lumotlarni kiriting." : t.lang === "en" ? "Enter your credentials to access your console." : "Введите данные для доступа к кабинету."}
               </p>
 
               {/* Quick login shortcuts */}
               <div className="mb-6 p-3 bg-zinc-900 border border-zinc-800">
                 <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-2">
-                  [ БЫСТРЫЙ ВХОД ]
+                  {t.lang === "uz" ? "[ TEZKOR KIRISH ]" : t.lang === "en" ? "[ QUICK SIGN IN ]" : "[ БЫСТРЫЙ ВХОД ]"}
                 </p>
                 <div className="grid grid-cols-3 gap-1">
                   <button
@@ -199,8 +201,8 @@ export default function LoginPage() {
                     }
                     className="py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs text-zinc-200 flex items-center justify-center gap-1 transition-colors"
                   >
-                    <UserCheck className="w-3 h-3 text-orange-400" />
-                    Клиент
+                    <UserCheck className="w-3 hand-3 text-orange-400" />
+                    {t.lang === "uz" ? "Mijoz" : t.lang === "en" ? "Client" : "Клиент"}
                   </button>
                   <button
                     type="button"
@@ -210,7 +212,7 @@ export default function LoginPage() {
                     className="py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs text-zinc-200 flex items-center justify-center gap-1 transition-colors"
                   >
                     <Truck className="w-3 h-3" />
-                    Курьер
+                    {t.navCourier}
                   </button>
                   <button
                     type="button"
@@ -218,7 +220,7 @@ export default function LoginPage() {
                     className="py-1.5 bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/40 text-xs text-orange-400 flex items-center justify-center gap-1 transition-colors font-bold"
                   >
                     <Shield className="w-3 h-3" />
-                    Админ
+                    {t.lang === "uz" ? "Admin" : t.lang === "en" ? "Admin" : "Админ"}
                   </button>
                 </div>
               </div>
@@ -323,7 +325,7 @@ export default function LoginPage() {
                   ) : (
                     <>
                       <ShieldCheck className="w-4 h-4" />
-                      Войти в систему
+                      {t.authModalLoginBtn}
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -331,12 +333,12 @@ export default function LoginPage() {
               </form>
 
               <p className="text-center mt-6 text-xs text-zinc-500 font-mono">
-                Нет аккаунта?{" "}
+                {t.lang === "uz" ? "Hisobingiz yo'qmi?" : t.lang === "en" ? "Don't have an account?" : "Нет аккаунта?"}{" "}
                 <Link
                   href="/auth/register"
                   className="text-orange-400 font-bold hover:underline"
                 >
-                  Зарегистрироваться
+                  {t.authModalRegisterBtn}
                 </Link>
               </p>
             </motion.div>

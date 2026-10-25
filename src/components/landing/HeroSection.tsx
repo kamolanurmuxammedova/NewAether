@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useOrderStore } from "@/store/use-order-store";
 import { playClickSound, playRadarPing } from "@/lib/sound";
+import { useTranslation } from "@/lib/i18n";
 import { Zap, Radio, ArrowRight, Compass } from "lucide-react";
 
 interface District {
@@ -21,14 +22,6 @@ interface District {
   address: string;
 }
 
-const DISTRICTS: District[] = [
-  { id: "city", name: "Деловой Сити", sub: "Финансовый кластер & Башни", x: 48, y: 42, couriersCount: 28, avgTimeMin: 3.8, baseRate: 14.5, surge: "1.0x (Норма)", address: "Пресненская наб., 12, Башня Федерация" },
-  { id: "center", name: "Центральный Хаб", sub: "Исторический центр & Бульвары", x: 58, y: 54, couriersCount: 21, avgTimeMin: 4.5, baseRate: 12.0, surge: "1.1x (Пик)", address: "Тверская ул., 15, стр. 1" },
-  { id: "north", name: "Северный Порт", sub: "Грузовой терминал & Склады", x: 32, y: 28, couriersCount: 16, avgTimeMin: 6.2, baseRate: 9.8, surge: "1.0x (Свободно)", address: "Ленинградский просп., 72, корп. 4" },
-  { id: "tech", name: "Технопарк", sub: "Кампусы разработки & Лаборатории", x: 24, y: 68, couriersCount: 14, avgTimeMin: 5.7, baseRate: 11.2, surge: "1.0x (Свободно)", address: "Сколковское ш., 45, Технопарк" },
-  { id: "airport", name: "Аэропорт Карго", sub: "Авиа-хаб & Таможенная зона", x: 82, y: 22, couriersCount: 9, avgTimeMin: 12.4, baseRate: 24.0, surge: "1.2x (Экспресс)", address: "Аэропорт, Терминал Карго B" },
-];
-
 interface Vehicle {
   id: number;
   x: number;
@@ -38,35 +31,43 @@ interface Vehicle {
   type: "car" | "drone" | "bike";
 }
 
-const TICKER_ITEMS = [
-  "84 КУРЬЕРА НА ЛИНИИ",
-  "СРЕДНЕЕ ВРЕМЯ: 3.4 МИН",
-  "ДОСТАВЛЕНО СЕГОДНЯ: 1,247",
-  "РЕЙТИНГ: 4.98 / 5.0",
-  "ПОКРЫТИЕ: 100% ГОРОДА",
-  "ПОДДЕРЖКА: 24/7 ОНЛАЙН",
-  "AETHER TELEMETRY v4.2",
-  "SLA: 99.98% ВЫПОЛНЕНО",
-  "ФЛОТ: 36 ДРОНОВ / 48 АВТО",
-];
-
-const TYPEWRITER_TEXTS = [
-  "Автономная доставка без задержек.",
-  "Реальный трекинг в реальном времени.",
-  "14 минут от заказа до двери.",
-  "Курьеры по всему городу онлайн.",
-];
-
-const HEADLINE_WORDS = ["Доставка,", "которая", "не", "подводит."];
-
 export function HeroSection() {
   const router = useRouter();
+  const t = useTranslation();
   const { setPickup } = useOrderStore();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(heroRef, { once: true });
 
-  const [selectedDistrict, setSelectedDistrict] = useState<District>(DISTRICTS[0]);
+  const districts: District[] = useMemo(
+    () => [
+      { id: "city", name: t.distCityName, sub: t.distCitySub, x: 48, y: 42, couriersCount: 28, avgTimeMin: 3.8, baseRate: 14.5, surge: t.heroNorm, address: t.distCityAddr },
+      { id: "center", name: t.distCenterName, sub: t.distCenterSub, x: 58, y: 54, couriersCount: 21, avgTimeMin: 4.5, baseRate: 12.0, surge: t.heroPeak, address: t.distCenterAddr },
+      { id: "north", name: t.distNorthName, sub: t.distNorthSub, x: 32, y: 28, couriersCount: 16, avgTimeMin: 6.2, baseRate: 9.8, surge: t.heroFree, address: t.distNorthAddr },
+      { id: "tech", name: t.distTechName, sub: t.distTechSub, x: 24, y: 68, couriersCount: 14, avgTimeMin: 5.7, baseRate: 11.2, surge: t.heroFree, address: t.distTechAddr },
+      { id: "airport", name: t.distAirportName, sub: t.distAirportSub, x: 82, y: 22, couriersCount: 9, avgTimeMin: 12.4, baseRate: 24.0, surge: t.heroExpress, address: t.distAirportAddr },
+    ],
+    [t]
+  );
+
+  const tickerItems = useMemo(
+    () => [t.ticker1, t.ticker2, t.ticker3, t.ticker4, t.ticker5, t.ticker6, t.ticker7, t.ticker8, t.ticker9],
+    [t]
+  );
+
+  const typewriterTexts = useMemo(
+    () => [t.heroSub1, t.heroSub2, t.heroSub3, t.heroSub4],
+    [t]
+  );
+
+  const headlineWords = useMemo(
+    () => [t.heroHeadline1, t.heroHeadline2, t.heroHeadline3, t.heroHeadline4],
+    [t]
+  );
+
+  const [selectedDistrictId, setSelectedDistrictId] = useState<string>("city");
+  const selectedDistrict = districts.find((d) => d.id === selectedDistrictId) || districts[0];
+
   const [simSpeed, setSimSpeed] = useState<number>(1);
   const [typewriterText, setTypewriterText] = useState("");
   const [typewriterIndex, setTypewriterIndex] = useState(0);
@@ -85,7 +86,7 @@ export function HeroSection() {
 
   // Typewriter effect
   useEffect(() => {
-    const currentText = TYPEWRITER_TEXTS[typewriterIndex];
+    const currentText = typewriterTexts[typewriterIndex % typewriterTexts.length];
     let timeout: ReturnType<typeof setTimeout>;
 
     if (!isDeleting && charIndex <= currentText.length) {
@@ -98,35 +99,43 @@ export function HeroSection() {
       timeout = setTimeout(() => setIsDeleting(true), 2200);
     } else {
       setIsDeleting(false);
-      setTypewriterIndex((i) => (i + 1) % TYPEWRITER_TEXTS.length);
+      setTypewriterIndex((i) => (i + 1) % typewriterTexts.length);
       setCharIndex(0);
     }
 
     return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, typewriterIndex]);
+  }, [charIndex, isDeleting, typewriterIndex, typewriterTexts]);
 
-  // Count-up animation on mount
+  // Animated counters
   useEffect(() => {
     if (!isInView) return;
-    const duration = 1800;
-    const steps = 70;
-    const interval = duration / steps;
-    let step = 0;
-    const timer = setInterval(() => {
-      step++;
-      const progress = step / steps;
-      const eased = 1 - Math.pow(1 - progress, 3);
+
+    const duration = 1600;
+    const start = performance.now();
+
+    const animateCounters = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+
       setDisplayCount({
-        couriers: Math.floor(84 * eased),
-        time: (3.4 * eased).toFixed(1),
-        orders: Math.floor(1247 * eased),
+        couriers: Math.floor(ease * 84),
+        time: (ease * 3.4).toFixed(1),
+        orders: Math.floor(ease * 1247),
       });
-      if (step >= steps) clearInterval(timer);
-    }, interval);
-    return () => clearInterval(timer);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateCounters);
+      } else {
+        setDisplayCount({ couriers: 84, time: "3.4", orders: 1247 });
+      }
+    };
+
+    const id = requestAnimationFrame(animateCounters);
+    return () => cancelAnimationFrame(id);
   }, [isInView]);
 
-  // Canvas radar render
+  // Canvas radar animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -139,63 +148,73 @@ export function HeroSection() {
     const render = () => {
       const w = canvas.width;
       const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const radius = Math.min(w, h) * 0.44;
+
       ctx.clearRect(0, 0, w, h);
 
-      // Grid
-      ctx.strokeStyle = "rgba(255,255,255,0.04)";
+      // Background grid
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
       ctx.lineWidth = 1;
-      for (let x = 0; x < w; x += 40) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      const step = 28;
+      for (let x = 0; x < w; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
       }
-      for (let y = 0; y < h; y += 40) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      for (let y = 0; y < h; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
       }
 
-      // Routes
-      ctx.strokeStyle = "rgba(255,77,0,0.28)";
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 4]);
+      // Range rings
+      [0.25, 0.5, 0.75, 1].forEach((frac) => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * frac, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255, 77, 0, 0.18)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // Crosshairs
+      ctx.strokeStyle = "rgba(255, 77, 0, 0.12)";
       ctx.beginPath();
-      DISTRICTS.forEach((d, i) => {
-        const dx = (d.x / 100) * w;
-        const dy = (d.y / 100) * h;
-        i === 0 ? ctx.moveTo(dx, dy) : ctx.lineTo(dx, dy);
-      });
-      ctx.closePath();
+      ctx.moveTo(cx - radius, cy);
+      ctx.lineTo(cx + radius, cy);
+      ctx.moveTo(cx, cy - radius);
+      ctx.lineTo(cx, cy + radius);
       ctx.stroke();
-      ctx.setLineDash([]);
 
-      // Radar rings
-      angle = (angle + 0.012 * simSpeed) % (Math.PI * 2);
-      const cx = w / 2, cy = h / 2;
-      const radius = Math.min(w, h) * 0.44;
-      ctx.strokeStyle = "rgba(255,255,255,0.07)";
-      ctx.lineWidth = 1;
-      [0.33, 0.66, 1].forEach((r) => {
-        ctx.beginPath(); ctx.arc(cx, cy, radius * r, 0, Math.PI * 2); ctx.stroke();
-      });
+      // Rotating radar beam
+      angle += 0.018 * simSpeed;
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      grad.addColorStop(0, "rgba(255, 77, 0, 0.25)");
+      grad.addColorStop(1, "rgba(255, 77, 0, 0.0)");
 
-      // Radar sweep
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, radius, angle, angle + 0.4);
+      ctx.arc(cx, cy, radius, angle, angle + 0.35);
       ctx.closePath();
-      const grad = ctx.createRadialGradient(cx, cy, 5, cx, cy, radius);
-      grad.addColorStop(0, "rgba(255,77,0,0.28)");
-      grad.addColorStop(1, "rgba(255,77,0,0)");
       ctx.fillStyle = grad;
       ctx.fill();
+
+      // Beam lead line
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle + 0.35) * radius, cy + Math.sin(angle + 0.35) * radius);
+      ctx.strokeStyle = "rgba(255, 77, 0, 0.65)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
       ctx.restore();
 
-      // Crosshairs
-      ctx.strokeStyle = "rgba(255,77,0,0.12)";
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
-
       // Vehicles
-      vehiclesRef.current.forEach((veh) => {
+      const vehicles = vehiclesRef.current;
+      vehicles.forEach((veh) => {
         veh.x += veh.vx * simSpeed;
         veh.y += veh.vy * simSpeed;
         if (veh.x < 10 || veh.x > w - 10) veh.vx *= -1;
@@ -219,7 +238,7 @@ export function HeroSection() {
   const handleSelectDistrict = (d: District) => {
     playClickSound();
     playRadarPing();
-    setSelectedDistrict(d);
+    setSelectedDistrictId(d.id);
   };
 
   const handleDispatch = () => {
@@ -248,7 +267,7 @@ export function HeroSection() {
       {/* Scrolling ticker */}
       <div className="border-b border-zinc-800 py-2 overflow-hidden shrink-0">
         <div className="flex gap-8 ticker-track whitespace-nowrap">
-          {[...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+          {[...tickerItems, ...tickerItems, ...tickerItems].map((item, i) => (
             <span
               key={i}
               className="text-[11px] font-mono text-zinc-400 flex items-center gap-3 shrink-0"
@@ -272,13 +291,13 @@ export function HeroSection() {
             className="inline-flex items-center gap-2 font-mono text-[11px] tracking-wider text-orange-400 border border-orange-500/30 bg-orange-500/8 px-3 py-1"
           >
             <span className="w-1.5 h-1.5 bg-emerald-500 inline-block animate-pulse" />
-            СТАТУС: ОПЕРАЦИОННЫЙ / 84 КУРЬЕРА
+            {t.statusOperational}
           </motion.div>
 
           {/* Giant headline with word stagger */}
           <div className="space-y-1 overflow-hidden">
             <h1 className="text-5xl sm:text-6xl xl:text-7xl font-black tracking-tight text-white leading-[1.0]">
-              {HEADLINE_WORDS.map((word, i) => (
+              {headlineWords.map((word, i) => (
                 <motion.span
                   key={word + i}
                   custom={i}
@@ -314,9 +333,9 @@ export function HeroSection() {
             className="grid grid-cols-3 gap-2"
           >
             {[
-              { label: "КУРЬЕРОВ", value: displayCount.couriers },
-              { label: "МИН ПОДАЧА", value: displayCount.time },
-              { label: "СЕГОДНЯ", value: displayCount.orders },
+              { label: t.statCouriers, value: displayCount.couriers },
+              { label: t.statAvgTime, value: displayCount.time },
+              { label: t.statToday, value: displayCount.orders },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -346,7 +365,7 @@ export function HeroSection() {
               className="gradient-btn px-6 py-3.5 text-sm font-bold flex items-center justify-center gap-2 group"
             >
               <Zap className="w-4 h-4 fill-current" />
-              <span>Заказать доставку</span>
+              <span>{t.heroOrderBtn}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </motion.button>
 
@@ -357,7 +376,7 @@ export function HeroSection() {
                 className="px-5 py-3.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-sm font-mono text-zinc-200 flex items-center justify-center gap-2 transition-colors h-full"
               >
                 <Compass className="w-4 h-4 text-zinc-400" />
-                Отследить груз
+                {t.heroTrackBtn}
               </Link>
             </motion.div>
           </motion.div>
@@ -391,9 +410,9 @@ export function HeroSection() {
             </div>
             <div className="grid grid-cols-3 gap-2 text-center">
               {[
-                { v: selectedDistrict.couriersCount, l: "Курьеров" },
-                { v: `~${selectedDistrict.avgTimeMin}м`, l: "Подача" },
-                { v: `$${selectedDistrict.baseRate}`, l: "Тариф" },
+                { v: selectedDistrict.couriersCount, l: t.heroDistrictCouriers },
+                { v: `~${selectedDistrict.avgTimeMin}${t.lang === "uz" ? "daq" : t.lang === "en" ? "m" : "м"}`, l: t.heroDistrictDispatch },
+                { v: `$${selectedDistrict.baseRate}`, l: t.heroDistrictRate },
               ].map((item) => (
                 <AnimatePresence key={item.l} mode="wait">
                   <motion.div
@@ -423,8 +442,8 @@ export function HeroSection() {
             <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-800 font-mono text-[11px]">
               <div className="flex items-center gap-2">
                 <Radio className="w-3.5 h-3.5 text-orange-500 animate-pulse" />
-                <span className="font-bold text-white">AETHER RADAR HUB</span>
-                <span className="text-zinc-600">[LIVE]</span>
+                <span className="font-bold text-white">{t.hubTitle}</span>
+                <span className="text-zinc-600">{t.hubLive}</span>
               </div>
               <button
                 onClick={() => {
@@ -445,7 +464,7 @@ export function HeroSection() {
                 height={440}
                 className="w-full h-full object-cover"
               />
-              {DISTRICTS.map((district) => {
+              {districts.map((district) => {
                 const isSelected = selectedDistrict.id === district.id;
                 return (
                   <button
@@ -481,17 +500,17 @@ export function HeroSection() {
               })}
               <div className="absolute bottom-2 left-2 bg-black/90 border border-zinc-800 px-2 py-1.5 text-[9px] font-mono text-zinc-400 space-y-0.5 pointer-events-none">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-orange-500" /> Дроны
+                  <span className="w-1.5 h-1.5 bg-orange-500" /> {t.hubDrones}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-zinc-300" /> Курьеры
+                  <span className="w-1.5 h-1.5 bg-zinc-300" /> {t.hubCouriers}
                 </div>
               </div>
             </div>
 
             {/* District chips */}
             <div className="flex gap-1 overflow-x-auto p-2 border-t border-zinc-800 font-mono">
-              {DISTRICTS.map((d) => (
+              {districts.map((d) => (
                 <button
                   key={d.id}
                   onClick={() => handleSelectDistrict(d)}

@@ -1,17 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/lib/i18n";
 
 export function PartnersSection() {
-  const partners = [
-    { name: "APPLE CORPORATE", category: "Диспетчеризация устройств" },
-    { name: "CARTIER", category: "Ювелирные изделия" },
-    { name: "LLOYD'S OF LONDON", category: "Международный андеррайтер" },
-    { name: "STRIPE INFRASTRUCTURE", category: "Защищенный сейф платежей" },
-    { name: "SONY ENTERPRISE", category: "Кинотехника и оптика" },
-    { name: "TESLA FLEET", category: "Экологичный флот" },
-  ];
+  const t = useTranslation();
+
+  const partners = useMemo(
+    () => [
+      { name: "APPLE CORPORATE", category: t.partnerCat1 },
+      { name: "CARTIER", category: t.partnerCat2 },
+      { name: "LLOYD'S OF LONDON", category: t.partnerCat3 },
+      { name: "STRIPE INFRASTRUCTURE", category: t.partnerCat4 },
+      { name: "SONY ENTERPRISE", category: t.partnerCat5 },
+      { name: "TESLA FLEET", category: t.partnerCat6 },
+    ],
+    [t]
+  );
 
   return (
     <section className="py-20 bg-[#09090B] border-t border-white/[0.06] relative">
@@ -24,7 +30,7 @@ export function PartnersSection() {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <p className="text-xs font-mono uppercase tracking-widest text-zinc-500">
-            Инфраструктурные партнеры и международные страховщики безопасности
+            {t.partnersTitle}
           </p>
         </motion.div>
 

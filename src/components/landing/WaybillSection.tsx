@@ -14,9 +14,11 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useOrderStore } from "@/store/use-order-store";
+import { useTranslation } from "@/lib/i18n";
 
 export function WaybillSection() {
   const router = useRouter();
+  const t = useTranslation();
   const { setPickup, setDropoff } = useOrderStore();
 
   const [trackingCode, setTrackingCode] = useState("AETH-9842-XF");
@@ -61,13 +63,13 @@ export function WaybillSection() {
         {/* Title */}
         <div className="text-center max-w-2xl mx-auto space-y-2 mb-12">
           <div className="inline-block font-mono text-[10px] uppercase tracking-wider text-orange-500 bg-orange-500/10 border border-orange-500/30 px-2 py-0.5 rounded-sm">
-            [ ТРАНСПОРТНЫЙ МАНИФЕСТ ]
+            {t.waybillBadge}
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            Официальная накладная <span className="text-orange-500">Air Waybill</span>
+            {t.waybillTitle} <span className="text-orange-500">{t.waybillTitleAccent}</span>
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 font-sans">
-            Сформируйте параметры груза, распечатайте физическую этикетку или мгновенно создайте рейс.
+            {t.waybillSubtitle}
           </p>
         </div>
 
@@ -79,17 +81,18 @@ export function WaybillSection() {
               <button
                 onClick={() => {
                   playClickSound();
-                  setThemeMode((t) => (t === "dark" ? "kraft" : "dark"));
+                  setThemeMode((m) => (m === "dark" ? "kraft" : "dark"));
                 }}
                 className="px-2.5 py-1 rounded-sm bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-white transition-colors"
               >
-                Бумага: {themeMode === "dark" ? "Термопечать (Dark)" : "Крафт-картон (Kraft)"}
+                {t.lang === "uz" ? "Qog'oz turi: " : t.lang === "en" ? "Paper: " : "Бумага: "}
+                {themeMode === "dark" ? t.waybillThemeDark : t.waybillThemeKraft}
               </button>
               <button
                 onClick={generateNewCode}
                 className="px-2.5 py-1 rounded-sm bg-zinc-900 border border-zinc-700 text-orange-400 hover:text-orange-300 transition-colors"
               >
-                + Новый трек
+                + {t.waybillGenerateBtn}
               </button>
             </div>
 
@@ -99,7 +102,7 @@ export function WaybillSection() {
                 className="px-2.5 py-1 rounded-sm bg-zinc-900 border border-zinc-700 text-zinc-300 flex items-center gap-1.5 transition-colors"
               >
                 {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{isCopied ? "Скопировано" : "Копировать трек"}</span>
+                <span>{isCopied ? t.waybillCopied : t.waybillCopyBtn}</span>
               </button>
 
               <button
@@ -107,7 +110,7 @@ export function WaybillSection() {
                 className="px-2.5 py-1 rounded-sm bg-zinc-900 border border-zinc-700 text-zinc-300 flex items-center gap-1.5 transition-colors"
               >
                 <Printer className="w-3.5 h-3.5" />
-                <span>Печать</span>
+                <span>{t.waybillPrintBtn}</span>
               </button>
             </div>
           </div>
@@ -123,7 +126,7 @@ export function WaybillSection() {
             {/* Rubber Stamp */}
             <div className="absolute right-6 top-6 transform rotate-6 pointer-events-none select-none z-10">
               <div className="border-2 border-red-600 text-red-600 px-3 py-1 text-sm font-black uppercase tracking-wider opacity-90">
-                FRAGILE / ОСТОРОЖНО
+                {t.lang === "uz" ? "FRAGILE / EHTIYOT BO'LING" : t.lang === "en" ? "FRAGILE / HANDLE WITH CARE" : "FRAGILE / ОСТОРОЖНО"}
               </div>
             </div>
 
@@ -131,7 +134,7 @@ export function WaybillSection() {
             <div className="flex flex-col sm:flex-row justify-between sm:items-center pb-4 border-b border-dashed border-current/30 gap-2">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-black text-base tracking-tight text-white">AETHER AIR WAYBILL</span>
+                  <span className="font-black text-base tracking-tight">AETHER AIR WAYBILL</span>
                 </div>
                 <div className="text-[10px] opacity-60">
                   STANDARD LOGISTICS MANIFEST • ISO-9001
@@ -139,7 +142,9 @@ export function WaybillSection() {
               </div>
 
               <div>
-                <div className="text-[10px] opacity-60">НОМЕР НАКЛАДНОЙ:</div>
+                <div className="text-[10px] opacity-60">
+                  {t.lang === "uz" ? "YUK XATI RAQAMI:" : t.lang === "en" ? "WAYBILL NUMBER:" : "НОМЕР НАКЛАДНОЙ:"}
+                </div>
                 <div className="text-sm font-black tracking-wider text-orange-500">{trackingCode}</div>
               </div>
             </div>
@@ -197,7 +202,9 @@ export function WaybillSection() {
             {/* Origin & Destination */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4 border-b border-dashed border-current/30 text-xs">
               <div className="space-y-1">
-                <div className="text-[10px] opacity-60 uppercase font-bold">[01] ОТПРАВИТЕЛЬ (ORIGIN)</div>
+                <div className="text-[10px] opacity-60 uppercase font-bold">
+                  [01] {t.lang === "uz" ? "YUBORUVCHI (ORIGIN)" : t.lang === "en" ? "SENDER (ORIGIN)" : "ОТПРАВИТЕЛЬ (ORIGIN)"}
+                </div>
                 <input
                   type="text"
                   value={senderName}
@@ -213,7 +220,9 @@ export function WaybillSection() {
               </div>
 
               <div className="space-y-1">
-                <div className="text-[10px] opacity-60 uppercase font-bold">[02] ПОЛУЧАТЕЛЬ (DESTINATION)</div>
+                <div className="text-[10px] opacity-60 uppercase font-bold">
+                  [02] {t.lang === "uz" ? "QABUL QILUVCHI (DESTINATION)" : t.lang === "en" ? "RECIPIENT (DESTINATION)" : "ПОЛУЧАТЕЛЬ (DESTINATION)"}
+                </div>
                 <input
                   type="text"
                   value={recipientName}
@@ -232,19 +241,27 @@ export function WaybillSection() {
             {/* Specs */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 py-3 border-b border-dashed border-current/30 text-center text-xs">
               <div>
-                <div className="text-[10px] opacity-60">ВЕС</div>
-                <div className="font-bold">{weightKg} КГ</div>
+                <div className="text-[10px] opacity-60">
+                  {t.lang === "uz" ? "VAZN" : t.lang === "en" ? "WEIGHT" : "ВЕС"}
+                </div>
+                <div className="font-bold">{weightKg} {t.lang === "uz" ? "KG" : t.lang === "en" ? "KG" : "КГ"}</div>
               </div>
               <div>
-                <div className="text-[10px] opacity-60">КЛАСС</div>
+                <div className="text-[10px] opacity-60">
+                  {t.lang === "uz" ? "TOIFA" : t.lang === "en" ? "CLASS" : "КЛАСС"}
+                </div>
                 <div className="font-bold text-orange-500">EXPEDITED</div>
               </div>
               <div>
-                <div className="text-[10px] opacity-60">ОЦЕНКА</div>
+                <div className="text-[10px] opacity-60">
+                  {t.lang === "uz" ? "QIYMAT" : t.lang === "en" ? "VALUE" : "ОЦЕНКА"}
+                </div>
                 <div className="font-bold">$2,500.00</div>
               </div>
               <div>
-                <div className="text-[10px] opacity-60">ПЛОМБА</div>
+                <div className="text-[10px] opacity-60">
+                  {t.lang === "uz" ? "PLOMBA" : t.lang === "en" ? "SEAL" : "ПЛОМБА"}
+                </div>
                 <div className="font-bold text-emerald-500">OK</div>
               </div>
             </div>
@@ -252,14 +269,18 @@ export function WaybillSection() {
             {/* Bottom Actions */}
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="text-[10px] opacity-60">
-                AETHER LOGISTICS ENGINE • 100% ГАРАНТИЯ СОХРАННОСТИ
+                {t.lang === "uz"
+                  ? "AETHER LOGISTIKA TIZIMI • 100% BUTUNLIK KAFOLATI"
+                  : t.lang === "en"
+                  ? "AETHER LOGISTICS ENGINE • 100% CUSTODY GUARANTEE"
+                  : "AETHER LOGISTICS ENGINE • 100% ГАРАНТИЯ СОХРАННОСТИ"}
               </div>
 
               <button
                 onClick={handleBookWithWaybill}
                 className="gradient-btn px-5 py-2 text-xs font-bold text-white flex items-center gap-1.5"
               >
-                <span>Оформить заказ по накладной</span>
+                <span>{t.waybillBookBtn}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

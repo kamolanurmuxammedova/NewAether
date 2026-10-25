@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 export function ThemeToggle() {
+  const t = useTranslation();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [mounted, setMounted] = useState(false);
 
@@ -50,14 +52,14 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      title={theme === "dark" ? "Светлая тема" : "Темная тема"}
-      aria-label="Переключить тему"
-      className="p-1.5 rounded-sm text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+      title={theme === "dark" ? t.themeToggleLight : t.themeToggleDark}
+      aria-label={theme === "dark" ? t.themeToggleLight : t.themeToggleDark}
+      className="p-1.5 rounded-sm text-zinc-400 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-200/80 dark:hover:bg-zinc-800 transition-colors"
     >
       {theme === "dark" ? (
         <Sun className="w-4 h-4 text-orange-400 hover:text-orange-300 transition-colors" />
       ) : (
-        <Moon className="w-4 h-4 text-zinc-700 hover:text-zinc-900 transition-colors" />
+        <Moon className="w-4 h-4 text-zinc-600 hover:text-zinc-900 transition-colors" />
       )}
     </button>
   );

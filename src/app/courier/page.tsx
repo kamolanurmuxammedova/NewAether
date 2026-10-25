@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { DeliveryMap } from "@/components/map/DeliveryMap";
 import { formatCurrency } from "@/lib/utils";
 import { useUserStore } from "@/store/use-user-store";
+import { useTranslation } from "@/lib/i18n";
 import Link from "next/link";
 import {
   Bike,
@@ -28,6 +29,7 @@ import {
 
 export default function CourierPanelPage() {
   const { user, switchRole } = useUserStore();
+  const t = useTranslation();
   const [courierKey, setCourierKey] = useState("");
   const [keyError, setKeyError] = useState(false);
 
@@ -60,13 +62,13 @@ export default function CourierPanelPage() {
 
           <div className="space-y-2">
             <span className="text-[10px] font-mono uppercase tracking-widest text-purple-400">
-              Терминал оператора флота
+              {t.courierGateBadge}
             </span>
             <h1 className="text-2xl font-bold text-white tracking-tight">
-              Требуется допуск курьера
+              {t.courierGateTitle}
             </h1>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Ваш аккаунт зарегистрирован с ролью <span className="text-white font-bold">{user.role}</span>. Доступ к активным коридорам доставки, пошаговой навигации и телеметрии транспорта требует активного ID курьера флота.
+              {t.courierGateDesc} <span className="text-white font-bold">{user.role}</span>. {t.courierGateDesc2}
             </p>
           </div>
 
@@ -79,12 +81,12 @@ export default function CourierPanelPage() {
                   setCourierKey(e.target.value);
                   setKeyError(false);
                 }}
-                placeholder="Введите токен флота (напр. courier)"
+                placeholder={t.courierGatePlaceholder}
                 className="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white text-center font-mono focus:border-purple-500"
               />
               {keyError && (
                 <p className="text-[11px] text-red-400 mt-1.5 font-mono">
-                  Нераспознанный токен пропуска флота.
+                  {t.courierGateError}
                 </p>
               )}
             </div>
@@ -93,7 +95,7 @@ export default function CourierPanelPage() {
               type="submit"
               className="w-full gradient-btn py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5 shadow-lg"
             >
-              <ShieldCheck className="w-4 h-4" /> Подключиться к консоли флота
+              <ShieldCheck className="w-4 h-4" /> {t.courierGateSubmit}
             </button>
           </form>
 
@@ -102,7 +104,7 @@ export default function CourierPanelPage() {
               href="/dashboard"
               className="text-xs text-zinc-400 hover:text-white inline-flex items-center gap-1"
             >
-              Вернуться в личный кабинет <ArrowRight className="w-3.5 h-3.5" />
+              {t.courierGateBack} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
@@ -175,13 +177,13 @@ export default function CourierPanelPage() {
           {/* Availability Toggle Switch */}
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
-              <span className="text-[10px] text-zinc-400 font-mono uppercase block">Статус флота</span>
+              <span className="text-[10px] text-zinc-400 font-mono uppercase block">{t.courierFleetStatus}</span>
               <span
                 className={`text-xs font-bold font-mono ${
                   isOnline ? "text-emerald-400" : "text-zinc-500"
                 }`}
               >
-                {isOnline ? "В СЕТИ • ПРИЁМ ЗАКАЗОВ" : "ОФЛАЙН"}
+                {isOnline ? t.courierStatusOnline : t.courierStatusOffline}
               </span>
             </div>
 
@@ -194,7 +196,7 @@ export default function CourierPanelPage() {
               }`}
             >
               <Power className={`w-4 h-4 ${isOnline ? "text-emerald-400" : "text-zinc-500"}`} />
-              <span>{isOnline ? "Уйти в офлайн" : "Выйти на линию"}</span>
+              <span>{isOnline ? t.courierGoOffline : t.courierGoOnline}</span>
             </button>
           </div>
         </div>
@@ -203,7 +205,7 @@ export default function CourierPanelPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-6 rounded-3xl bg-[#111217] border border-white/5 space-y-2">
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">
-              Выручка за сегодня
+              {t.courierKpiToday}
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               $348.50
@@ -213,7 +215,7 @@ export default function CourierPanelPage() {
 
           <div className="p-6 rounded-3xl bg-[#111217] border border-white/5 space-y-2">
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">
-              Доступно к выводу
+              {t.courierKpiAvailable}
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">
               {formatCurrency(walletBalance)}
@@ -222,13 +224,13 @@ export default function CourierPanelPage() {
               onClick={() => setIsWithdrawOpen(true)}
               className="text-[11px] text-indigo-400 hover:text-white font-mono underline block"
             >
-              Мгновенный вывод за 60 сек
+              {t.courierKpiWithdrawFast}
             </button>
           </div>
 
           <div className="p-6 rounded-3xl bg-[#111217] border border-white/5 space-y-2">
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">
-              Заряд батареи ТС
+              {t.courierKpiBattery}
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono flex items-center gap-2">
               88% <BatteryCharging className="w-5 h-5 text-indigo-400" />
@@ -238,7 +240,7 @@ export default function CourierPanelPage() {
 
           <div className="p-6 rounded-3xl bg-[#111217] border border-white/5 space-y-2">
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block">
-              Климат-контроль капсулы
+              {t.courierKpiTemp}
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono flex items-center gap-2">
               4.2°C <Thermometer className="w-5 h-5 text-cyan-400" />
@@ -250,10 +252,10 @@ export default function CourierPanelPage() {
         {/* Tab Controls */}
         <div className="flex items-center gap-2 border-b border-white/10 pb-2 overflow-x-auto">
           {[
-            { id: "RADAR", label: "Радар диспетчеризации", icon: Zap },
-            { id: "EARNINGS", label: "Доходы и аналитика", icon: TrendingUp },
-            { id: "VEHICLE", label: "Телеметрия транспорта", icon: Bike },
-            { id: "DOCS", label: "Верификация и допуски", icon: FileCheck },
+            { id: "RADAR", label: t.courierTabRadar, icon: Zap },
+            { id: "EARNINGS", label: t.courierTabEarnings, icon: TrendingUp },
+            { id: "VEHICLE", label: t.courierTabVehicle, icon: Bike },
+            { id: "DOCS", label: t.courierTabDocs, icon: FileCheck },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -280,7 +282,7 @@ export default function CourierPanelPage() {
             {/* Live Navigation Map */}
             <div className="lg:col-span-7 space-y-4">
               <h2 className="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <Navigation className="w-4 h-4 text-emerald-400" /> Городская навигационная телеметрия
+                <Navigation className="w-4 h-4 text-emerald-400" /> {t.courierNavTelemetry}
               </h2>
               <DeliveryMap
                 pickup={{ lat: 40.7638, lng: -73.973 }}
@@ -298,9 +300,9 @@ export default function CourierPanelPage() {
             <div className="lg:col-span-5 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-amber-400" /> Входящие заказы ({availableJobs.length})
+                  <Zap className="w-4 h-4 text-amber-400" /> {t.courierIncomingDispatches} ({availableJobs.length})
                 </h2>
-                <span className="text-[10px] font-mono text-zinc-500">Автообновление: 5 сек</span>
+                <span className="text-[10px] font-mono text-zinc-500">{t.courierAutoRefresh}</span>
               </div>
 
               {availableJobs.length > 0 ? (
@@ -313,7 +315,7 @@ export default function CourierPanelPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-mono font-bold text-white">{job.orderNum}</span>
                         <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                          Истекает через {job.expiresIn}с
+                          {t.courierExpiresIn} {job.expiresIn}с
                         </span>
                       </div>
 
@@ -323,7 +325,7 @@ export default function CourierPanelPage() {
                           {job.pickup} ➔ {job.dropoff}
                         </div>
                         <div className="text-zinc-500 font-mono text-[11px]">
-                          Дистанция коридора: {job.distance}
+                          {t.courierCorridorDistance} {job.distance}
                         </div>
                       </div>
 
@@ -339,7 +341,7 @@ export default function CourierPanelPage() {
                           onClick={() => handleAcceptJob(job.id)}
                           className="gradient-btn px-5 py-2.5 rounded-xl text-xs font-bold text-white shadow-lg"
                         >
-                          Принять заказ
+                          {t.courierAcceptBtn}
                         </button>
                       </div>
                     </div>
@@ -348,7 +350,7 @@ export default function CourierPanelPage() {
               ) : (
                 <div className="p-8 rounded-3xl bg-[#111217] border border-white/5 text-center text-xs text-zinc-400 space-y-2">
                   <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto" />
-                  <p>Все приоритетные коридоры в вашем секторе укомплектованы.</p>
+                  <p>{t.courierAllManned}</p>
                 </div>
               )}
             </div>
@@ -495,14 +497,14 @@ export default function CourierPanelPage() {
             onSubmit={handleWithdraw}
             className="w-full max-w-md p-6 rounded-3xl bg-[#111217] border border-white/10 text-white space-y-4"
           >
-            <h3 className="text-base font-bold">Мгновенный вывод средств</h3>
+            <h3 className="text-base font-bold">{t.courierWithdrawTitle}</h3>
             <p className="text-xs text-zinc-400">
-              Средства будут перечислены на привязанную карту через защищенный шлюз мгновенных выплат менее чем за 60 секунд.
+              {t.courierWithdrawDesc}
             </p>
 
             <div>
               <label className="text-[11px] text-zinc-400 block mb-1">
-                Сумма к выводу (Доступно: {formatCurrency(walletBalance)})
+                {t.courierWithdrawAmountLabel} ({t.courierWithdrawAvailable} {formatCurrency(walletBalance)})
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-2.5 text-xs text-zinc-500 font-mono">$</span>
@@ -524,13 +526,13 @@ export default function CourierPanelPage() {
                 onClick={() => setIsWithdrawOpen(false)}
                 className="px-4 py-2 rounded-xl text-xs bg-white/5 text-zinc-300 hover:text-white"
               >
-                Отмена
+                {t.courierWithdrawCancel}
               </button>
               <button
                 type="submit"
                 className="gradient-btn px-5 py-2.5 rounded-xl text-xs font-bold text-white"
               >
-                Выполнить выплату
+                {t.courierWithdrawSubmit}
               </button>
             </div>
           </form>
